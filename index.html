@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <link type="image/png" rel="icon" href="Tarkīz.png">
+  <title>Tarkīz · Stay on Task</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(145deg, #13151f 0%, #1a1e2c 100%);
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+      color: #eef4ff;
+    }
+
+    /* main container */
+    .focus-dashboard {
+      max-width: 1300px;
+      margin: 0 auto;
+      backdrop-filter: blur(2px);
+    }
+
+    /* header */
+    .brand {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .brand h1 {
+      font-size: 2.3rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #c0e0ff, #9b7eff);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+    }
+    .brand p {
+      color: #8e9bb5;
+      margin-top: 0.4rem;
+      font-size: 0.95rem;
+    }
+
+    /* two columns (timer / tasks) */
+    .grid-2col {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.8rem;
+      justify-content: center;
+    }
+    .timer-card {
+      flex: 1.2;
+      min-width: 280px;
+      background: rgba(20, 24, 36, 0.7);
+      backdrop-filter: blur(16px);
+      border-radius: 2rem;
+      padding: 1.8rem 1.6rem;
+      box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: all 0.2s;
+    }
+    .tasks-card {
+      flex: 1;
+      min-width: 280px;
+      background: rgba(20, 24, 36, 0.7);
+      backdrop-filter: blur(16px);
+      border-radius: 2rem;
+      padding: 1.6rem;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    /* timer elements */
+    .timer-mode {
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #b3c7ff;
+      background: #23283770;
+      display: inline-block;
+      padding: 0.2rem 1rem;
+      border-radius: 60px;
+      margin-bottom: 1.3rem;
+    }
+    .timer-display {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    #timer {
+      font-size: 5rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 4px;
+      background: linear-gradient(120deg, #f0f9ff, #cddeff);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      line-height: 1.2;
+      text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    @media (max-width: 500px) {
+      #timer { font-size: 3.8rem; }
+    }
+    .progress-bar-container {
+      background: #2b3042;
+      border-radius: 30px;
+      height: 10px;
+      width: 100%;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+    #progressFill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #6c8eff, #a582ff);
+      border-radius: 30px;
+      transition: width 0.2s ease;
+    }
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.7rem;
+      margin: 1rem 0 1.2rem;
+    }
+    button {
+      background: #2a2f42;
+      border: none;
+      color: #f0f3fe;
+      padding: 0.5rem 1rem;
+      border-radius: 2rem;
+      font-weight: 500;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: 0.15s;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      backdrop-filter: blur(4px);
+    }
+    button.primary {
+      background: #5f7cff;
+      color: white;
+      box-shadow: 0 4px 10px rgba(90, 110, 255, 0.3);
+    }
+    button.warning {
+      background: #ff9366;
+      color: #181c2c;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.05);
+    }
+    button:active {
+      transform: translateY(1px);
+    }
+    .preset-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.6rem;
+      margin-top: 0.6rem;
+      border-top: 1px solid #2f354b;
+      padding-top: 1rem;
+    }
+    .small-btn {
+      padding: 0.4rem 1rem;
+      font-size: 0.75rem;
+      background: #1f253b;
+    }
+
+    /* tasks area */
+    .task-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+    .task-header h2 {
+      font-size: 1.4rem;
+      font-weight: 500;
+    }
+    .add-task {
+      display: flex;
+      gap: 0.5rem;
+      margin: 0.5rem 0 0.8rem;
+    }
+    .add-task input {
+      flex: 1;
+      background: #111522;
+      border: 1px solid #2f385a;
+      padding: 0.7rem 0.9rem;
+      border-radius: 2rem;
+      color: white;
+      font-size: 0.85rem;
+      outline: none;
+      transition: 0.2s;
+    }
+    .add-task input:focus {
+      border-color: #7d9eff;
+    }
+    .task-list {
+      list-style: none;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 0.3rem;
+    }
+    .task-list li {
+      background: #1e2338aa;
+      margin: 0.6rem 0;
+      padding: 0.6rem 0.8rem;
+      border-radius: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      transition: 0.1s;
+      border: 1px solid #2e3450;
+    }
+    .task-list li.completed span {
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+    .task-list li input[type="checkbox"] {
+      width: 1.2rem;
+      height: 1.2rem;
+      accent-color: #6c8eff;
+      cursor: pointer;
+    }
+    .task-text {
+      flex: 1;
+      font-size: 0.9rem;
+      word-break: break-word;
+    }
+    .delete-task {
+      background: transparent;
+      color: #ff8a7a;
+      font-size: 1.2rem;
+      font-weight: bold;
+      padding: 0 0.3rem;
+      box-shadow: none;
+    }
+    .delete-task:hover {
+      background: #ff5f4a20;
+      transform: none;
+    }
+    .focus-goal {
+      background: #0c102070;
+      border-radius: 1.2rem;
+      padding: 0.9rem;
+      margin-top: 0.4rem;
+      border-left: 3px solid #6c8eff;
+    }
+    .focus-goal label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #9faed9;
+    }
+    .focus-goal input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px dashed #3d4466;
+      padding: 0.5rem 0;
+      font-size: 1rem;
+      color: #f0f4ff;
+      outline: none;
+      font-weight: 500;
+    }
+    .quote-section {
+      margin-top: 1.8rem;
+      text-align: center;
+      background: #11151f50;
+      border-radius: 2rem;
+      padding: 1rem;
+      backdrop-filter: blur(12px);
+    }
+    .quote-text {
+      font-style: italic;
+      font-size: 0.95rem;
+      color: #cbd5ff;
+    }
+    .quote-author {
+      font-size: 0.7rem;
+      margin-top: 0.5rem;
+      color: #8d9ad0;
+    }
+    .refresh-quote {
+      background: none;
+      font-size: 0.75rem;
+      margin-top: 0.5rem;
+      padding: 0.2rem 0.9rem;
+      box-shadow: none;
+      border: 1px solid #4f5a82;
+    }
+    .toast-msg {
+      position: fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e2740e6;
+      backdrop-filter: blur(10px);
+      color: #d6e6ff;
+      padding: 0.7rem 1.5rem;
+      border-radius: 60px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      z-index: 1000;
+      transition: 0.2s;
+      pointer-events: none;
+      border: 1px solid #6f8eff70;
+      white-space: nowrap;
+    }
+    @media (max-width: 640px) {
+      .toast-msg { white-space: normal; width: 85%; text-align: center; font-size: 0.8rem; }
+      body { padding: 1rem; }
+    }
+    footer {
+      text-align: center;
+      margin-top: 2.5rem;
+      font-size: 0.7rem;
+      color: #5c688b;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #202536;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #53639e;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="focus-dashboard">
+  <div class="brand">
+    <h1> 🎯 Tarkīz</h1>
+    <p>flow state · one task at a time</p>
+  </div>
+
+  <div class="grid-2col">
+    <!-- TIMER CARD  -->
+    <div class="timer-card">
+      <div class="timer-mode" id="modeLabel">🍅 Tarkīz MODE</div>
+      <div class="timer-display">
+        <div id="timer">25:00</div>
+        <div class="progress-bar-container">
+          <div id="progressFill"></div>
+        </div>
+      </div>
+      <div class="btn-group">
+        <button id="startBtn" class="primary">▶ Start</button>
+        <button id="pauseBtn">⏸ Pause</button>
+        <button id="resetBtn">⟳ Reset</button>
+      </div>
+      <div class="preset-group">
+        <button data-minutes="25" data-mode="focus" class="small-btn mode-preset">🍅 Tarkīz (25)</button>
+        <button data-minutes="5" data-mode="shortbreak" class="small-btn mode-preset">☕ Short Break (5)</button>
+        <button data-minutes="15" data-mode="longbreak" class="small-btn mode-preset">🌿 Long Break (15)</button>
+        <button id="minusFive" class="small-btn">-5 min</button>
+        <button id="plusFive" class="small-btn">+5 min</button>
+      </div>
+      <div style="font-size: 0.7rem; text-align: center; margin-top: 1rem; color:#7d87aa;">
+        ⏱️ timer ends → notification & toast
+      </div>
+    </div>
+
+    <!-- TASKS + FOCUS GOAL + QUOTE -->
+    <div class="tasks-card">
+      <div class="task-header">
+        <h2>📋 Task laser</h2>
+        <button id="clearCompletedBtn" style="background: none; font-size:0.7rem;">✓ clear done</button>
+      </div>
+      <div class="add-task">
+        <input type="text" id="newTaskInput" placeholder="e.g., write report, code, read..." autocomplete="off">
+        <button id="addTaskBtn">➕ Add</button>
+      </div>
+      <ul class="task-list" id="taskList">
+        <li style="opacity:0.7; justify-content: center;">✨ tasks appear here</li>
+      </ul>
+
+      <div class="focus-goal">
+        <label>🎯 CURRENT Tarkīz (right now)</label>
+        <input type="text" id="currentFocusInput" placeholder="What's the ONE thing you're working on?" autocomplete="off">
+      </div>
+    </div>
+  </div>
+
+  <!-- QUOTE SECTION  -->
+  <div class="quote-section">
+    <div class="quote-text" id="quoteText">“You don't have to be great to start, but you have to start to be great.”</div>
+    <div class="quote-author" id="quoteAuthor">— Zig Ziglar</div>
+    <button id="newQuoteBtn" class="refresh-quote">✨ New inspiration</button>
+  </div>
+  <footer>⚡ pomodoro flow • tasks persist locally • focus on what matters</footer>
+</div>
+
+<script>
+  // ======================= QUOTES LIBRARY ==========================
+  const quotes = [
+    { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+    { text: "Focus on the step in front of you, not the whole staircase.", author: "Unknown" },
+    { text: "You can do anything, but not everything.", author: "David Allen" },
+    { text: "Do or do not. There is no try.", author: "Yoda" },
+    { text: "It always seems impossible until it’s done.", author: "Nelson Mandela" },
+    { text: "Small daily improvements are the key to staggering long-term results.", author: "Robin Sharma" },
+    { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
+    { text: "Work until you no longer have to introduce yourself.", author: "Unknown" },
+    { text: "The future depends on what you do today.", author: "Mahatma Gandhi" },
+    { text: "Deep work is the ability to focus without distraction.", author: "Cal Newport" }
+  ];
+  let currentQuoteIndex = 0;
+
+  function updateQuoteRandom() {
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    const q = quotes[randomIndex];
+    document.getElementById('quoteText').innerText = `“${q.text}”`;
+    document.getElementById('quoteAuthor').innerText = `— ${q.author}`;
+  }
+
+  function refreshQuote() {
+    updateQuoteRandom();
+  }
+
+  // ======================= TIMER LOGIC ==========================
+  let timeLeftSeconds = 25 * 60;      // current display seconds
+  let totalSecondsReference = 25 * 60; // baseline for progress bar
+  let timerInterval = null;
+  let isRunning = false;
+  let currentModeName = "focus";      // 'focus', 'shortbreak', 'longbreak'
+
+  // DOM elements
+  const timerDisplay = document.getElementById('timer');
+  const startBtn = document.getElementById('startBtn');
+  const pauseBtn = document.getElementById('pauseBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const progressFill = document.getElementById('progressFill');
+  const modeLabelSpan = document.getElementById('modeLabel');
+
+  function updateTimerUI() {
+    const minutes = Math.floor(timeLeftSeconds / 60);
+    const seconds = timeLeftSeconds % 60;
+    timerDisplay.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    // update progress bar relative to totalSecondsReference
+    if (totalSecondsReference > 0) {
+      const percent = (timeLeftSeconds / totalSecondsReference) * 100;
+      progressFill.style.width = `${Math.max(0, percent)}%`;
+    } else {
+      progressFill.style.width = '0%';
+    }
+  }
+
+  function updateModeLabel() {
+    if (currentModeName === 'focus') modeLabelSpan.innerHTML = '🍅 Tarkīz MODE · work session';
+    else if (currentModeName === 'shortbreak') modeLabelSpan.innerHTML = '☕ SHORT BREAK · recharge';
+    else if (currentModeName === 'longbreak') modeLabelSpan.innerHTML = '🌿 LONG BREAK · refresh mind';
+  }
+
+  function stopTimer() {
+    if (timerInterval) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+    isRunning = false;
+  }
+
+  function startTimer() {
+    if (timerInterval) stopTimer();
+    if (timeLeftSeconds <= 0) {
+      showToast("⏰ Timer finished! Reset or choose a new session.", 2000);
+      return;
+    }
+    isRunning = true;
+    timerInterval = setInterval(() => {
+      if (!isRunning) return;
+      if (timeLeftSeconds <= 1) {
+        // Timer reaches zero
+        stopTimer();
+        timeLeftSeconds = 0;
+        updateTimerUI();
+        handleTimerComplete();
+      } else {
+        timeLeftSeconds--;
+        updateTimerUI();
+      }
+    }, 1000);
+  }
+
+  function showToast(message, duration = 2800) {
+    let existingToast = document.querySelector('.toast-msg');
+    if (existingToast) existingToast.remove();
+    const toast = document.createElement('div');
+    toast.className = 'toast-msg';
+    toast.innerText = message;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+      if (toast) toast.remove();
+    }, duration);
+  }
+
+  function requestNotificationPermission() {
+    if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+      Notification.requestPermission();
+    }
+  }
+
+  function triggerNotification(title, body) {
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification(title, { body, icon: "https://cdn-icons-png.flaticon.com/512/2917/2917995.png" });
+    } else if ("Notification" in window && Notification.permission !== "denied") {
+      Notification.requestPermission().then(perm => {
+        if (perm === "granted") new Notification(title, { body });
+      });
+    }
+  }
+
+  function handleTimerComplete() {
+    isRunning = false;
+    stopTimer();
+    updateTimerUI();
+    let message = "";
+    if (currentModeName === 'focus') {
+      message = "🎉 Focus session complete! Great work. Take a well-deserved break.";
+      showToast(message, 4000);
+      triggerNotification("Focus session completed!", "Time to rest your eyes. Take a short break.");
+    } else {
+      message = "✨ Break time is over! Ready to dive back into focus?";
+      showToast(message, 4000);
+      triggerNotification("Break finished", "Break's up — return to your task with fresh energy.");
+    }
+    // optional subtle sound beep simulation? No auto-sound to avoid annoyance
+  }
+
+  function setTimerFromMinutes(minutes, mode, keepRunning = false) {
+    const wasRunning = isRunning;
+    if (wasRunning) stopTimer();
+    let newSeconds = minutes * 60;
+    if (newSeconds < 0) newSeconds = 0;
+    if (newSeconds > 7200) newSeconds = 7200; // max 2h
+    timeLeftSeconds = newSeconds;
+    totalSecondsReference = newSeconds;
+    currentModeName = mode;
+    updateModeLabel();
+    updateTimerUI();
+    if (wasRunning && !keepRunning) {
+      // if it was running before, we stop (new preset overrides)
+      isRunning = false;
+    } else if (wasRunning && keepRunning) {
+      startTimer();
+    } else {
+      isRunning = false;
+    }
+  }
+
+  function resetTimerToCurrentMode() {
+    const wasRunning = isRunning;
+    if (wasRunning) stopTimer();
+    let defaultMinutes = 25;
+    if (currentModeName === 'focus') defaultMinutes = 25;
+    else if (currentModeName === 'shortbreak') defaultMinutes = 5;
+    else if (currentModeName === 'longbreak') defaultMinutes = 15;
+    timeLeftSeconds = defaultMinutes * 60;
+    totalSecondsReference = timeLeftSeconds;
+    updateTimerUI();
+    isRunning = false;
+  }
+
+  function adjustMinutes(delta) {
+    const wasRunning = isRunning;
+    if (wasRunning) stopTimer();
+    let currentMinutes = Math.floor(timeLeftSeconds / 60);
+    let newMinutes = currentMinutes + delta;
+    if (newMinutes < 1) newMinutes = 1;
+    if (newMinutes > 120) newMinutes = 120;
+    timeLeftSeconds = newMinutes * 60;
+    totalSecondsReference = timeLeftSeconds;
+    updateTimerUI();
+    isRunning = false;
+    // mode label changes to custom if needed but keep mode variable but show generic?
+    if (!['focus','shortbreak','longbreak'].includes(currentModeName)) {
+      // keep custom mode but label update could be generic
+    }
+    modeLabelSpan.innerHTML = `⏲️ CUSTOM · ${newMinutes} min`;
+    currentModeName = 'custom';
+    updateModeLabel();
+  }
+
+  // ======================= TASKS MANAGER (localStorage) ==================
+  let tasks = []; // each: { id, text, completed }
+
+  const taskListEl = document.getElementById('taskList');
+  const newTaskInput = document.getElementById('newTaskInput');
+  const addTaskBtn = document.getElementById('addTaskBtn');
+  const clearCompletedBtn = document.getElementById('clearCompletedBtn');
+
+  function saveTasksToLocal() {
+    localStorage.setItem('zenfocus_tasks', JSON.stringify(tasks));
+  }
+
+  function loadTasksFromLocal() {
+    const stored = localStorage.getItem('zenfocus_tasks');
+    if (stored) {
+      try {
+        tasks = JSON.parse(stored);
+      } catch(e) { tasks = []; }
+    } else {
+      tasks = [];
+    }
+    renderTaskList();
+  }
+
+  function renderTaskList() {
+    if (!taskListEl) return;
+    if (tasks.length === 0) {
+      taskListEl.innerHTML = `<li style="opacity:0.6; justify-content:center; background: none;">🎯 Add your first task — stay focused</li>`;
+      return;
+    }
+    taskListEl.innerHTML = '';
+    tasks.forEach(task => {
+      const li = document.createElement('li');
+      li.className = task.completed ? 'completed' : '';
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.checked = task.completed;
+      cb.addEventListener('change', (e) => {
+        task.completed = e.target.checked;
+        saveTasksToLocal();
+        renderTaskList();
+      });
+      const span = document.createElement('span');
+      span.className = 'task-text';
+      span.innerText = task.text;
+      const delBtn = document.createElement('button');
+      delBtn.innerText = '✖';
+      delBtn.className = 'delete-task';
+      delBtn.addEventListener('click', () => {
+        tasks = tasks.filter(t => t.id !== task.id);
+        saveTasksToLocal();
+        renderTaskList();
+      });
+      li.appendChild(cb);
+      li.appendChild(span);
+      li.appendChild(delBtn);
+      taskListEl.appendChild(li);
+    });
+  }
+
+  function addNewTask() {
+    const text = newTaskInput.value.trim();
+    if (text === "") {
+      showToast("Write a small task to stay on track!", 1200);
+      return;
+    }
+    const newTask = {
+      id: Date.now(),
+      text: text,
+      completed: false
+    };
+    tasks.push(newTask);
+    saveTasksToLocal();
+    renderTaskList();
+    newTaskInput.value = "";
+    showToast(`✓ Task added: "${text.substring(0, 30)}"`, 1000);
+  }
+
+  function clearCompletedTasks() {
+    const before = tasks.length;
+    tasks = tasks.filter(t => !t.completed);
+    if (tasks.length < before) {
+      saveTasksToLocal();
+      renderTaskList();
+      showToast("Cleared completed tasks — fresh focus", 1200);
+    } else {
+      showToast("No completed tasks to clear", 1000);
+    }
+  }
+
+  // ======================= CURRENT FOCUS GOAL ==========================
+  const focusInput = document.getElementById('currentFocusInput');
+  function loadFocusGoal() {
+    const savedGoal = localStorage.getItem('zenfocus_goal');
+    if (savedGoal) focusInput.value = savedGoal;
+    else focusInput.placeholder = "e.g., finish project proposal";
+  }
+  focusInput.addEventListener('input', (e) => {
+    localStorage.setItem('zenfocus_goal', e.target.value);
+  });
+
+  // ============ Notifications permission hint on first start click ==========
+  function enableNotificationsOnFirstStart() {
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+  }
+
+  // ========================== EVENT LISTENERS ==============================
+  startBtn.addEventListener('click', () => {
+    if (timeLeftSeconds <= 0) {
+      showToast("⏳ Timer at zero! Reset or choose a new time.", 1500);
+      return;
+    }
+    enableNotificationsOnFirstStart();
+    startTimer();
+  });
+  pauseBtn.addEventListener('click', () => {
+    if (isRunning) stopTimer();
+    else showToast("Timer already paused", 800);
+  });
+  resetBtn.addEventListener('click', () => {
+    stopTimer();
+    if (currentModeName === 'focus') setTimerFromMinutes(25, 'focus', false);
+    else if (currentModeName === 'shortbreak') setTimerFromMinutes(5, 'shortbreak', false);
+    else if (currentModeName === 'longbreak') setTimerFromMinutes(15, 'longbreak', false);
+    else {
+      // custom reset to 25 min default if custom
+      setTimerFromMinutes(25, 'focus', false);
+    }
+    showToast("Timer reset to current session length", 1000);
+  });
+  document.querySelectorAll('.mode-preset').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const mins = parseInt(btn.dataset.minutes);
+      const mode = btn.dataset.mode;
+      stopTimer();
+      setTimerFromMinutes(mins, mode, false);
+      showToast(`${mode === 'focus' ? 'Focus' : mode === 'shortbreak' ? 'Short break' : 'Long break'} — ${mins} minutes`, 1200);
+    });
+  });
+  document.getElementById('minusFive').addEventListener('click', () => { adjustMinutes(-5); showToast("-5 minutes", 700); });
+  document.getElementById('plusFive').addEventListener('click', () => { adjustMinutes(5); showToast("+5 minutes", 700); });
+  addTaskBtn.addEventListener('click', addNewTask);
+  newTaskInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addNewTask(); });
+  clearCompletedBtn.addEventListener('click', clearCompletedTasks);
+  document.getElementById('newQuoteBtn').addEventListener('click', refreshQuote);
+
+  // initial loading
+  function init() {
+    loadTasksFromLocal();
+    loadFocusGoal();
+    setTimerFromMinutes(25, 'focus', false);
+    updateQuoteRandom();
+    // Request notification permission on gentle interaction? do later, just optional
+    // minor idle request??? No automatic to avoid spam. But page load check neutral.
+    if ("Notification" in window && Notification.permission === "default") {
+      // we can ask later when user clicks start, done.
+    }
+    // additional: prevent interval bleeding
+  }
+
+  init();
+</script>
+</body>
+</html>
