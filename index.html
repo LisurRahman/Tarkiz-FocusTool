@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <link type="image/png" rel="icon" href="Tarkīz.png">
   <title>Tarkīz · Stay on Task</title>
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+      font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, 'Roboto', sans-serif;
     }
 
     body {
@@ -20,14 +19,12 @@
       color: #eef4ff;
     }
 
-    /* main container */
     .focus-dashboard {
       max-width: 1300px;
       margin: 0 auto;
       backdrop-filter: blur(2px);
     }
 
-    /* header */
     .brand {
       text-align: center;
       margin-bottom: 2rem;
@@ -47,7 +44,6 @@
       font-size: 0.95rem;
     }
 
-    /* two columns (timer / tasks) */
     .grid-2col {
       display: flex;
       flex-wrap: wrap;
@@ -63,7 +59,6 @@
       padding: 1.8rem 1.6rem;
       box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.08);
-      transition: all 0.2s;
     }
     .tasks-card {
       flex: 1;
@@ -79,7 +74,6 @@
       gap: 1.2rem;
     }
 
-    /* timer elements */
     .timer-mode {
       font-size: 0.9rem;
       text-transform: uppercase;
@@ -105,7 +99,6 @@
       -webkit-background-clip: text;
       color: transparent;
       line-height: 1.2;
-      text-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     @media (max-width: 500px) {
       #timer { font-size: 3.8rem; }
@@ -144,7 +137,6 @@
       cursor: pointer;
       transition: 0.15s;
       box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      backdrop-filter: blur(4px);
     }
     button.primary {
       background: #5f7cff;
@@ -177,7 +169,6 @@
       background: #1f253b;
     }
 
-    /* tasks area */
     .task-header {
       display: flex;
       justify-content: space-between;
@@ -201,7 +192,6 @@
       color: white;
       font-size: 0.85rem;
       outline: none;
-      transition: 0.2s;
     }
     .add-task input:focus {
       border-color: #7d9eff;
@@ -220,7 +210,6 @@
       display: flex;
       align-items: center;
       gap: 0.7rem;
-      transition: 0.1s;
       border: 1px solid #2e3450;
     }
     .task-list li.completed span {
@@ -313,7 +302,6 @@
       font-size: 0.9rem;
       font-weight: 500;
       z-index: 1000;
-      transition: 0.2s;
       pointer-events: none;
       border: 1px solid #6f8eff70;
       white-space: nowrap;
@@ -345,12 +333,11 @@
 
 <div class="focus-dashboard">
   <div class="brand">
-    <h1> 🎯 Tarkīz</h1>
+    <h1>🎯 Tarkīz</h1>
     <p>flow state · one task at a time</p>
   </div>
 
   <div class="grid-2col">
-    <!-- TIMER CARD  -->
     <div class="timer-card">
       <div class="timer-mode" id="modeLabel">🍅 Tarkīz MODE</div>
       <div class="timer-display">
@@ -372,11 +359,10 @@
         <button id="plusFive" class="small-btn">+5 min</button>
       </div>
       <div style="font-size: 0.7rem; text-align: center; margin-top: 1rem; color:#7d87aa;">
-        ⏱️ timer ends → notification & toast
+        ⏱️ Timer continues even when tab is inactive → returns with correct time
       </div>
     </div>
 
-    <!-- TASKS + FOCUS GOAL + QUOTE -->
     <div class="tasks-card">
       <div class="task-header">
         <h2>📋 Task laser</h2>
@@ -397,48 +383,23 @@
     </div>
   </div>
 
-  <!-- QUOTE SECTION  -->
   <div class="quote-section">
     <div class="quote-text" id="quoteText">“You don't have to be great to start, but you have to start to be great.”</div>
     <div class="quote-author" id="quoteAuthor">— Zig Ziglar</div>
     <button id="newQuoteBtn" class="refresh-quote">✨ New inspiration</button>
   </div>
-  <footer>⚡ pomodoro flow • tasks persist locally • focus on what matters</footer>
+  <footer>⚡ pomodoro flow • tasks persist locally • focus on what matters </footer>
 </div>
 
 <script>
-  // ======================= QUOTES LIBRARY ==========================
-  const quotes = [
-    { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
-    { text: "Focus on the step in front of you, not the whole staircase.", author: "Unknown" },
-    { text: "You can do anything, but not everything.", author: "David Allen" },
-    { text: "Do or do not. There is no try.", author: "Yoda" },
-    { text: "It always seems impossible until it’s done.", author: "Nelson Mandela" },
-    { text: "Small daily improvements are the key to staggering long-term results.", author: "Robin Sharma" },
-    { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
-    { text: "Work until you no longer have to introduce yourself.", author: "Unknown" },
-    { text: "The future depends on what you do today.", author: "Mahatma Gandhi" },
-    { text: "Deep work is the ability to focus without distraction.", author: "Cal Newport" }
-  ];
-  let currentQuoteIndex = 0;
-
-  function updateQuoteRandom() {
-    const randomIndex = Math.floor(Math.random() * quotes.length);
-    const q = quotes[randomIndex];
-    document.getElementById('quoteText').innerText = `“${q.text}”`;
-    document.getElementById('quoteAuthor').innerText = `— ${q.author}`;
-  }
-
-  function refreshQuote() {
-    updateQuoteRandom();
-  }
-
-  // ======================= TIMER LOGIC ==========================
-  let timeLeftSeconds = 25 * 60;      // current display seconds
-  let totalSecondsReference = 25 * 60; // baseline for progress bar
-  let timerInterval = null;
+  // ======================= PERSISTENT TIMER LOGIC ========================
+  // Instead of relying only on setInterval, we store an absolute end timestamp.
+  let endTime = null;           // milliseconds (Date.now() + remainingMs)
   let isRunning = false;
-  let currentModeName = "focus";      // 'focus', 'shortbreak', 'longbreak'
+  let currentModeName = "focus";    // 'focus', 'shortbreak', 'longbreak', 'custom'
+  let totalDurationSeconds = 25 * 60;   // for progress bar (full duration)
+  let timerInterval = null;
+  let completionFired = false;   // to avoid multiple completion alerts
 
   // DOM elements
   const timerDisplay = document.getElementById('timer');
@@ -448,76 +409,145 @@
   const progressFill = document.getElementById('progressFill');
   const modeLabelSpan = document.getElementById('modeLabel');
 
-  function updateTimerUI() {
-    const minutes = Math.floor(timeLeftSeconds / 60);
-    const seconds = timeLeftSeconds % 60;
-    timerDisplay.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    // update progress bar relative to totalSecondsReference
-    if (totalSecondsReference > 0) {
-      const percent = (timeLeftSeconds / totalSecondsReference) * 100;
-      progressFill.style.width = `${Math.max(0, percent)}%`;
+  function saveTimerState() {
+    // Save only if running
+    if (isRunning && endTime) {
+      localStorage.setItem('zenfocus_timer_end', endTime);
+      localStorage.setItem('zenfocus_timer_mode', currentModeName);
+      localStorage.setItem('zenfocus_timer_total', totalDurationSeconds);
+      localStorage.setItem('zenfocus_timer_running', 'true');
     } else {
-      progressFill.style.width = '0%';
+      localStorage.removeItem('zenfocus_timer_end');
+      localStorage.removeItem('zenfocus_timer_running');
+      // keep mode & total for reset reference
+      localStorage.setItem('zenfocus_timer_mode_static', currentModeName);
+      localStorage.setItem('zenfocus_timer_total_static', totalDurationSeconds);
     }
   }
 
-  function updateModeLabel() {
-    if (currentModeName === 'focus') modeLabelSpan.innerHTML = '🍅 Tarkīz MODE · work session';
-    else if (currentModeName === 'shortbreak') modeLabelSpan.innerHTML = '☕ SHORT BREAK · recharge';
-    else if (currentModeName === 'longbreak') modeLabelSpan.innerHTML = '🌿 LONG BREAK · refresh mind';
+  function loadTimerState() {
+    const storedRunning = localStorage.getItem('zenfocus_timer_running');
+    if (storedRunning === 'true') {
+      const storedEnd = parseInt(localStorage.getItem('zenfocus_timer_end'), 10);
+      if (storedEnd && storedEnd > Date.now()) {
+        endTime = storedEnd;
+        isRunning = true;
+        currentModeName = localStorage.getItem('zenfocus_timer_mode') || 'focus';
+        totalDurationSeconds = parseInt(localStorage.getItem('zenfocus_timer_total'), 10) || 25*60;
+        updateModeLabel();
+        updateTimerAndProgress();  // display current remaining
+        startTimerUpdater();       // restart the interval updater
+      } else {
+        // expired or invalid
+        isRunning = false;
+        endTime = null;
+        localStorage.removeItem('zenfocus_timer_running');
+        // fallback: set default from static
+        const savedMode = localStorage.getItem('zenfocus_timer_mode_static') || 'focus';
+        const savedTotal = parseInt(localStorage.getItem('zenfocus_timer_total_static'), 10) || 25*60;
+        setTimerManually(savedTotal, savedMode, false);
+      }
+    } else {
+      // no running timer – set default from stored static or 25 focus
+      const savedMode = localStorage.getItem('zenfocus_timer_mode_static') || 'focus';
+      const savedTotal = parseInt(localStorage.getItem('zenfocus_timer_total_static'), 10) || 25*60;
+      setTimerManually(savedTotal, savedMode, false);
+    }
   }
 
-  function stopTimer() {
+  function updateTimerAndProgress() {
+    if (!endTime) {
+      // fallback: show totalDurationSeconds
+      const remainingSec = totalDurationSeconds;
+      displayTimeFromSeconds(remainingSec);
+      updateProgressBar(remainingSec);
+      return;
+    }
+    let remainingMs = endTime - Date.now();
+    if (remainingMs <= 0) {
+      // Timer reached zero
+      if (!completionFired) handleTimerComplete();
+      displayTimeFromSeconds(0);
+      updateProgressBar(0);
+      // stop running state
+      if (isRunning) {
+        stopTimerUpdater();
+        isRunning = false;
+        endTime = null;
+        saveTimerState();
+      }
+      return;
+    }
+    const remainingSec = Math.ceil(remainingMs / 1000);
+    displayTimeFromSeconds(remainingSec);
+    updateProgressBar(remainingSec);
+  }
+
+  function displayTimeFromSeconds(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    timerDisplay.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  function updateProgressBar(remainingSec) {
+    if (totalDurationSeconds <= 0) {
+      progressFill.style.width = '0%';
+      return;
+    }
+    let percent = (remainingSec / totalDurationSeconds) * 100;
+    percent = Math.min(100, Math.max(0, percent));
+    progressFill.style.width = `${percent}%`;
+  }
+
+  function startTimerUpdater() {
+    if (timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      if (isRunning && endTime) {
+        updateTimerAndProgress();
+        // if timer just finished, inside updateTimerAndProgress it will call handle and stop
+      } else if (!isRunning) {
+        // do nothing
+      } else {
+        // safety: if no endTime but isRunning, stop
+        if (isRunning && !endTime) {
+          stopTimerUpdater();
+          isRunning = false;
+        }
+      }
+    }, 200);
+  }
+
+  function stopTimerUpdater() {
     if (timerInterval) {
       clearInterval(timerInterval);
       timerInterval = null;
     }
+  }
+
+  function handleTimerComplete() {
+    completionFired = true;
     isRunning = false;
-  }
+    endTime = null;
+    saveTimerState();
+    stopTimerUpdater();
 
-  function startTimer() {
-    if (timerInterval) stopTimer();
-    if (timeLeftSeconds <= 0) {
-      showToast("⏰ Timer finished! Reset or choose a new session.", 2000);
-      return;
+    let message = "";
+    if (currentModeName === 'focus') {
+      message = "🎉 Focus session complete! Great work. Take a break.";
+      triggerNotification("Focus completed!", "Time to rest and recharge.");
+    } else {
+      message = "✨ Break time is over! Ready to focus again?";
+      triggerNotification("Break finished", "Come back to your task with fresh energy.");
     }
-    isRunning = true;
-    timerInterval = setInterval(() => {
-      if (!isRunning) return;
-      if (timeLeftSeconds <= 1) {
-        // Timer reaches zero
-        stopTimer();
-        timeLeftSeconds = 0;
-        updateTimerUI();
-        handleTimerComplete();
-      } else {
-        timeLeftSeconds--;
-        updateTimerUI();
-      }
-    }, 1000);
-  }
-
-  function showToast(message, duration = 2800) {
-    let existingToast = document.querySelector('.toast-msg');
-    if (existingToast) existingToast.remove();
-    const toast = document.createElement('div');
-    toast.className = 'toast-msg';
-    toast.innerText = message;
-    document.body.appendChild(toast);
-    setTimeout(() => {
-      if (toast) toast.remove();
-    }, duration);
-  }
-
-  function requestNotificationPermission() {
-    if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
-      Notification.requestPermission();
-    }
+    showToast(message, 4000);
+    // reset completion flag after a moment to avoid double toasts
+    setTimeout(() => { completionFired = false; }, 1000);
+    updateTimerAndProgress(); // show 0:00
   }
 
   function triggerNotification(title, body) {
     if ("Notification" in window && Notification.permission === "granted") {
-      new Notification(title, { body, icon: "https://cdn-icons-png.flaticon.com/512/2917/2917995.png" });
+      new Notification(title, { body });
     } else if ("Notification" in window && Notification.permission !== "denied") {
       Notification.requestPermission().then(perm => {
         if (perm === "granted") new Notification(title, { body });
@@ -525,101 +555,139 @@
     }
   }
 
-  function handleTimerComplete() {
-    isRunning = false;
-    stopTimer();
-    updateTimerUI();
-    let message = "";
-    if (currentModeName === 'focus') {
-      message = "🎉 Focus session complete! Great work. Take a well-deserved break.";
-      showToast(message, 4000);
-      triggerNotification("Focus session completed!", "Time to rest your eyes. Take a short break.");
-    } else {
-      message = "✨ Break time is over! Ready to dive back into focus?";
-      showToast(message, 4000);
-      triggerNotification("Break finished", "Break's up — return to your task with fresh energy.");
-    }
-    // optional subtle sound beep simulation? No auto-sound to avoid annoyance
+  function showToast(msg, duration = 3000) {
+    let existing = document.querySelector('.toast-msg');
+    if (existing) existing.remove();
+    const toast = document.createElement('div');
+    toast.className = 'toast-msg';
+    toast.innerText = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), duration);
   }
 
-  function setTimerFromMinutes(minutes, mode, keepRunning = false) {
-    const wasRunning = isRunning;
-    if (wasRunning) stopTimer();
-    let newSeconds = minutes * 60;
-    if (newSeconds < 0) newSeconds = 0;
-    if (newSeconds > 7200) newSeconds = 7200; // max 2h
-    timeLeftSeconds = newSeconds;
-    totalSecondsReference = newSeconds;
+  function updateModeLabel() {
+    if (currentModeName === 'focus') modeLabelSpan.innerHTML = '🍅 Tarkīz MODE · work session';
+    else if (currentModeName === 'shortbreak') modeLabelSpan.innerHTML = '☕ SHORT BREAK · recharge';
+    else if (currentModeName === 'longbreak') modeLabelSpan.innerHTML = '🌿 LONG BREAK · refresh mind';
+    else modeLabelSpan.innerHTML = `⏲️ CUSTOM · ${Math.floor(totalDurationSeconds/60)} min`;
+  }
+
+  function setTimerManually(durationSeconds, mode, startImmediately = false) {
+    // Stop any running timer
+    if (isRunning) {
+      stopTimerUpdater();
+      isRunning = false;
+      endTime = null;
+    }
+    totalDurationSeconds = durationSeconds;
     currentModeName = mode;
     updateModeLabel();
-    updateTimerUI();
-    if (wasRunning && !keepRunning) {
-      // if it was running before, we stop (new preset overrides)
-      isRunning = false;
-    } else if (wasRunning && keepRunning) {
+    // display new time
+    displayTimeFromSeconds(durationSeconds);
+    updateProgressBar(durationSeconds);
+    saveTimerState();
+    if (startImmediately) {
       startTimer();
-    } else {
-      isRunning = false;
     }
+  }
+
+  function startTimer() {
+    if (isRunning) {
+      showToast("Timer already running", 1000);
+      return;
+    }
+    // get current remaining seconds from display
+    let currentRemainingSec = getRemainingSecondsFromDisplay();
+    if (currentRemainingSec <= 0) {
+      showToast("Timer is at zero. Reset or choose a new duration.", 1500);
+      return;
+    }
+    // set endTime based on current remaining
+    endTime = Date.now() + (currentRemainingSec * 1000);
+    isRunning = true;
+    completionFired = false;
+    startTimerUpdater();
+    saveTimerState();
+    // request notification permission
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+  }
+
+  function pauseTimer() {
+    if (!isRunning) {
+      showToast("Timer already paused", 800);
+      return;
+    }
+    // capture remaining seconds before clearing endTime
+    let remaining = getRemainingSecondsFromDisplay();
+    stopTimerUpdater();
+    isRunning = false;
+    endTime = null;
+    // update totalDurationSeconds to remaining (so progress bar stays consistent)
+    totalDurationSeconds = remaining;
+    updateProgressBar(remaining);
+    displayTimeFromSeconds(remaining);
+    saveTimerState();
+    showToast("Paused", 800);
   }
 
   function resetTimerToCurrentMode() {
-    const wasRunning = isRunning;
-    if (wasRunning) stopTimer();
-    let defaultMinutes = 25;
-    if (currentModeName === 'focus') defaultMinutes = 25;
-    else if (currentModeName === 'shortbreak') defaultMinutes = 5;
-    else if (currentModeName === 'longbreak') defaultMinutes = 15;
-    timeLeftSeconds = defaultMinutes * 60;
-    totalSecondsReference = timeLeftSeconds;
-    updateTimerUI();
-    isRunning = false;
+    if (isRunning) {
+      stopTimerUpdater();
+      isRunning = false;
+      endTime = null;
+    }
+    let defaultSec = 25 * 60;
+    if (currentModeName === 'focus') defaultSec = 25 * 60;
+    else if (currentModeName === 'shortbreak') defaultSec = 5 * 60;
+    else if (currentModeName === 'longbreak') defaultSec = 15 * 60;
+    else defaultSec = totalDurationSeconds; // keep custom if needed, but we keep custom mode unchanged
+    if (currentModeName === 'custom') defaultSec = totalDurationSeconds;
+    totalDurationSeconds = defaultSec;
+    displayTimeFromSeconds(defaultSec);
+    updateProgressBar(defaultSec);
+    saveTimerState();
+    showToast("Timer reset", 1000);
+  }
+
+  function getRemainingSecondsFromDisplay() {
+    const text = timerDisplay.innerText;
+    const parts = text.split(':');
+    const mins = parseInt(parts[0], 10);
+    const secs = parseInt(parts[1], 10);
+    return mins * 60 + secs;
   }
 
   function adjustMinutes(delta) {
-    const wasRunning = isRunning;
-    if (wasRunning) stopTimer();
-    let currentMinutes = Math.floor(timeLeftSeconds / 60);
-    let newMinutes = currentMinutes + delta;
-    if (newMinutes < 1) newMinutes = 1;
-    if (newMinutes > 120) newMinutes = 120;
-    timeLeftSeconds = newMinutes * 60;
-    totalSecondsReference = timeLeftSeconds;
-    updateTimerUI();
-    isRunning = false;
-    // mode label changes to custom if needed but keep mode variable but show generic?
-    if (!['focus','shortbreak','longbreak'].includes(currentModeName)) {
-      // keep custom mode but label update could be generic
-    }
-    modeLabelSpan.innerHTML = `⏲️ CUSTOM · ${newMinutes} min`;
+    if (isRunning) pauseTimer();
+    let currentMin = Math.floor(getRemainingSecondsFromDisplay() / 60);
+    let newMin = currentMin + delta;
+    if (newMin < 1) newMin = 1;
+    if (newMin > 120) newMin = 120;
+    const newSec = newMin * 60;
+    totalDurationSeconds = newSec;
     currentModeName = 'custom';
+    displayTimeFromSeconds(newSec);
+    updateProgressBar(newSec);
     updateModeLabel();
+    saveTimerState();
+    showToast(`${delta>0 ? '+' : ''}${delta} min`, 800);
   }
 
-  // ======================= TASKS MANAGER (localStorage) ==================
-  let tasks = []; // each: { id, text, completed }
-
+  // ======================= TASKS & QUOTES (same as before) ==================
+  let tasks = [];
   const taskListEl = document.getElementById('taskList');
   const newTaskInput = document.getElementById('newTaskInput');
   const addTaskBtn = document.getElementById('addTaskBtn');
   const clearCompletedBtn = document.getElementById('clearCompletedBtn');
 
-  function saveTasksToLocal() {
-    localStorage.setItem('zenfocus_tasks', JSON.stringify(tasks));
-  }
-
-  function loadTasksFromLocal() {
+  function saveTasks() { localStorage.setItem('zenfocus_tasks', JSON.stringify(tasks)); }
+  function loadTasks() {
     const stored = localStorage.getItem('zenfocus_tasks');
-    if (stored) {
-      try {
-        tasks = JSON.parse(stored);
-      } catch(e) { tasks = []; }
-    } else {
-      tasks = [];
-    }
+    tasks = stored ? JSON.parse(stored) : [];
     renderTaskList();
   }
-
   function renderTaskList() {
     if (!taskListEl) return;
     if (tasks.length === 0) {
@@ -633,9 +701,9 @@
       const cb = document.createElement('input');
       cb.type = 'checkbox';
       cb.checked = task.completed;
-      cb.addEventListener('change', (e) => {
-        task.completed = e.target.checked;
-        saveTasksToLocal();
+      cb.addEventListener('change', () => {
+        task.completed = cb.checked;
+        saveTasks();
         renderTaskList();
       });
       const span = document.createElement('span');
@@ -646,7 +714,7 @@
       delBtn.className = 'delete-task';
       delBtn.addEventListener('click', () => {
         tasks = tasks.filter(t => t.id !== task.id);
-        saveTasksToLocal();
+        saveTasks();
         renderTaskList();
       });
       li.appendChild(cb);
@@ -655,110 +723,77 @@
       taskListEl.appendChild(li);
     });
   }
-
   function addNewTask() {
     const text = newTaskInput.value.trim();
-    if (text === "") {
-      showToast("Write a small task to stay on track!", 1200);
-      return;
-    }
-    const newTask = {
-      id: Date.now(),
-      text: text,
-      completed: false
-    };
-    tasks.push(newTask);
-    saveTasksToLocal();
+    if (!text) { showToast("Please write a task", 1000); return; }
+    tasks.push({ id: Date.now(), text, completed: false });
+    saveTasks();
     renderTaskList();
-    newTaskInput.value = "";
-    showToast(`✓ Task added: "${text.substring(0, 30)}"`, 1000);
+    newTaskInput.value = '';
+    showToast(`➕ "${text}" added`, 1000);
   }
-
-  function clearCompletedTasks() {
-    const before = tasks.length;
+  function clearCompleted() {
+    const oldLen = tasks.length;
     tasks = tasks.filter(t => !t.completed);
-    if (tasks.length < before) {
-      saveTasksToLocal();
-      renderTaskList();
-      showToast("Cleared completed tasks — fresh focus", 1200);
-    } else {
-      showToast("No completed tasks to clear", 1000);
-    }
+    if (tasks.length < oldLen) { saveTasks(); renderTaskList(); showToast("Cleared completed tasks", 1000); }
+    else showToast("No completed tasks", 800);
   }
 
-  // ======================= CURRENT FOCUS GOAL ==========================
+  // Focus goal
   const focusInput = document.getElementById('currentFocusInput');
-  function loadFocusGoal() {
-    const savedGoal = localStorage.getItem('zenfocus_goal');
-    if (savedGoal) focusInput.value = savedGoal;
-    else focusInput.placeholder = "e.g., finish project proposal";
-  }
-  focusInput.addEventListener('input', (e) => {
-    localStorage.setItem('zenfocus_goal', e.target.value);
-  });
+  function loadFocusGoal() { focusInput.value = localStorage.getItem('zenfocus_goal') || ''; }
+  focusInput.addEventListener('input', () => localStorage.setItem('zenfocus_goal', focusInput.value));
 
-  // ============ Notifications permission hint on first start click ==========
-  function enableNotificationsOnFirstStart() {
-    if ("Notification" in window && Notification.permission === "default") {
-      Notification.requestPermission();
-    }
+  // Quotes
+  const quotes = [
+    { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+    { text: "Focus on the step in front of you, not the whole staircase.", author: "Unknown" },
+    { text: "You can do anything, but not everything.", author: "David Allen" },
+    { text: "Do or do not. There is no try.", author: "Yoda" },
+    { text: "It always seems impossible until it’s done.", author: "Nelson Mandela" },
+    { text: "Small daily improvements are the key to staggering long-term results.", author: "Robin Sharma" },
+    { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
+    { text: "Deep work is the ability to focus without distraction.", author: "Cal Newport" }
+  ];
+  function randomQuote() {
+    const q = quotes[Math.floor(Math.random() * quotes.length)];
+    document.getElementById('quoteText').innerText = `“${q.text}”`;
+    document.getElementById('quoteAuthor').innerText = `— ${q.author}`;
   }
+  document.getElementById('newQuoteBtn').addEventListener('click', randomQuote);
 
-  // ========================== EVENT LISTENERS ==============================
-  startBtn.addEventListener('click', () => {
-    if (timeLeftSeconds <= 0) {
-      showToast("⏳ Timer at zero! Reset or choose a new time.", 1500);
-      return;
-    }
-    enableNotificationsOnFirstStart();
-    startTimer();
-  });
-  pauseBtn.addEventListener('click', () => {
-    if (isRunning) stopTimer();
-    else showToast("Timer already paused", 800);
-  });
-  resetBtn.addEventListener('click', () => {
-    stopTimer();
-    if (currentModeName === 'focus') setTimerFromMinutes(25, 'focus', false);
-    else if (currentModeName === 'shortbreak') setTimerFromMinutes(5, 'shortbreak', false);
-    else if (currentModeName === 'longbreak') setTimerFromMinutes(15, 'longbreak', false);
-    else {
-      // custom reset to 25 min default if custom
-      setTimerFromMinutes(25, 'focus', false);
-    }
-    showToast("Timer reset to current session length", 1000);
-  });
+  // ========== Event listeners ==========
+  startBtn.addEventListener('click', startTimer);
+  pauseBtn.addEventListener('click', pauseTimer);
+  resetBtn.addEventListener('click', resetTimerToCurrentMode);
   document.querySelectorAll('.mode-preset').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const mins = parseInt(btn.dataset.minutes);
+    btn.addEventListener('click', () => {
+      const mins = parseInt(btn.dataset.minutes, 10);
       const mode = btn.dataset.mode;
-      stopTimer();
-      setTimerFromMinutes(mins, mode, false);
-      showToast(`${mode === 'focus' ? 'Focus' : mode === 'shortbreak' ? 'Short break' : 'Long break'} — ${mins} minutes`, 1200);
+      if (isRunning) pauseTimer();
+      setTimerManually(mins * 60, mode, false);
+      showToast(`${mode==='focus'?'Focus': mode==='shortbreak'?'Short break':'Long break'} ${mins} min`, 1200);
     });
   });
-  document.getElementById('minusFive').addEventListener('click', () => { adjustMinutes(-5); showToast("-5 minutes", 700); });
-  document.getElementById('plusFive').addEventListener('click', () => { adjustMinutes(5); showToast("+5 minutes", 700); });
+  document.getElementById('minusFive').addEventListener('click', () => adjustMinutes(-5));
+  document.getElementById('plusFive').addEventListener('click', () => adjustMinutes(5));
   addTaskBtn.addEventListener('click', addNewTask);
-  newTaskInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addNewTask(); });
-  clearCompletedBtn.addEventListener('click', clearCompletedTasks);
-  document.getElementById('newQuoteBtn').addEventListener('click', refreshQuote);
-
-  // initial loading
-  function init() {
-    loadTasksFromLocal();
-    loadFocusGoal();
-    setTimerFromMinutes(25, 'focus', false);
-    updateQuoteRandom();
-    // Request notification permission on gentle interaction? do later, just optional
-    // minor idle request??? No automatic to avoid spam. But page load check neutral.
-    if ("Notification" in window && Notification.permission === "default") {
-      // we can ask later when user clicks start, done.
+  newTaskInput.addEventListener('keypress', e => e.key === 'Enter' && addNewTask());
+  clearCompletedBtn.addEventListener('click', clearCompleted);
+  // visibility change: force update when returning to tab
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && isRunning && endTime) {
+      updateTimerAndProgress();
     }
-    // additional: prevent interval bleeding
-  }
+  });
 
-  init();
+  // Initialize everything
+  loadTimerState();
+  loadTasks();
+  loadFocusGoal();
+  randomQuote();
+  // start updater if timer was running from storage
+  if (isRunning && endTime) startTimerUpdater();
 </script>
 </body>
 </html>
